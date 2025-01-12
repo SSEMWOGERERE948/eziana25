@@ -9,7 +9,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Luxury Hotel & Resort',
+  title: 'Eziana Palm Hotels',
   description: 'Experience luxury and comfort at its finest',
 };
 
