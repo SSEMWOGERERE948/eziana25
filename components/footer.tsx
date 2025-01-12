@@ -47,7 +47,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <Building2 className="h-6 w-6" />
+              <img
+                src="/logo2.png"
+                alt="Eziana Palm Hotels Logo"
+                className="h-12 w-12 rounded-full object-cover"
+              />
               <span className="text-xl font-bold">Eziana Palm Hotels</span>
             </div>
             <p className="text-sm">Experience luxury and comfort at its finest.</p>
@@ -74,15 +78,15 @@ export function Footer() {
             <ul className="space-y-2">
               <li className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span>123 Luxury Ave, City, Country</span>
+                <span>Kiryandongo,North Western Region</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Phone className="h-4 w-4" />
-                <span>+1 234 567 890</span>
+                <span>+256 (774) 831-231</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
-                <span>info@luxuryhotel.com</span>
+                <span>ezianapalmhotel@gmail.com</span>
               </li>
             </ul>
           </div>

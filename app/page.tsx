@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Link from "next/link";
 import Image from "next/image";
-import { Bed, Coffee, Wifi, Utensils } from 'lucide-react';
+import { Bed, Coffee, Wifi, Utensils, Users, Calendar } from 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
@@ -27,7 +27,7 @@ export default function Home() {
         style={{ opacity, scale }}
       >
         <Image
-          src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb"
+          src="reception.jpg"
           alt="Eziana Palm Hotels"
           fill
           className="object-cover"
@@ -103,18 +103,18 @@ export default function Home() {
             {[
               {
                 title: "Deluxe Room",
-                image: "https://images.unsplash.com/photo-1618773928121-c32242e63f39",
-                price: "$200",
+                image: "gallery-3.jpg",
+                price: "$42",
               },
               {
                 title: "Executive Suite",
-                image: "https://images.unsplash.com/photo-1591088398332-8a7791972843",
-                price: "$350",
+                image: "executive-2.jpg",
+                price: "$70",
               },
               {
-                title: "Presidential Suite",
-                image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
-                price: "$500",
+                title: "Twin Beds Room",
+                image: "twin-bed.jpg",
+                price: "$56",
               },
             ].map((room, i) => (
               <motion.div
@@ -143,6 +143,127 @@ export default function Home() {
                 </Card>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Restaurant Section */}
+      <section className="py-16 bg-secondary">
+        <div className="container mx-auto px-4">
+          <motion.h2 
+            className="text-3xl font-bold text-center mb-12 text-secondary-foreground"
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            Our Restaurant
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Gourmet Breakfast",
+                image: "gallery-4.jpg",
+                description: "Start your day with our delicious breakfast buffet",
+              },
+              {
+                title: "Lunch Specials",
+                image: "lunch.jpg",
+                description: "Enjoy our chef's daily lunch specials",
+              },
+              {
+                title: "Fine Dining",
+                image: "single-1.jpg",
+                description: "Experience exquisite cuisine in our evening restaurant",
+              },
+            ].map((dish, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <AspectRatio ratio={16 / 9}>
+                    <Image
+                      src={dish.image}
+                      alt={dish.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </AspectRatio>
+                  <div className="p-4">
+                    <h3 className="font-semibold mb-2 text-card-foreground">{dish.title}</h3>
+                    <p className="text-muted-foreground">{dish.description}</p>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Conference Room Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <motion.h2 
+            className="text-3xl font-bold text-center mb-12 text-foreground"
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            Conference Facilities
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <AspectRatio ratio={16 / 9}>
+                  <Image
+                    src="conference.jpg"
+                    alt="Conference Room"
+                    fill
+                    className="object-cover"
+                  />
+                </AspectRatio>
+              </Card>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="flex flex-col justify-center"
+            >
+              <h3 className="text-2xl font-semibold mb-4 text-foreground">State-of-the-Art Conference Room</h3>
+              <ul className="space-y-2">
+                <li className="flex items-center text-muted-foreground">
+                  <Users className="w-5 h-5 mr-2 text-primary" />
+                  Capacity for up to 100 attendees
+                </li>
+                <li className="flex items-center text-muted-foreground">
+                  <Wifi className="w-5 h-5 mr-2 text-primary" />
+                  High-speed Wi-Fi and modern AV equipment
+                </li>
+                <li className="flex items-center text-muted-foreground">
+                  <Coffee className="w-5 h-5 mr-2 text-primary" />
+                  Catering services available
+                </li>
+                <li className="flex items-center text-muted-foreground">
+                  <Calendar className="w-5 h-5 mr-2 text-primary" />
+                  Flexible booking options
+                </li>
+              </ul>
+              <Button asChild className="mt-6 bg-primary text-primary-foreground hover:bg-primary/90">
+                <Link href="/book">Book Conference Room</Link>
+              </Button>
+            </motion.div>
           </div>
         </div>
       </section>

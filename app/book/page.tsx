@@ -22,9 +22,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import emailjs from "emailjs-com"; 
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -32,7 +34,9 @@ const formSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 characters"),
   checkIn: z.date(),
   checkOut: z.date(),
-  roomType: z.string(),
+  bookingOptions: z.array(z.enum(["room", "conference"])).min(1, "Select at least one option"),
+  roomType: z.string().optional(),
+  conferenceRoomType: z.string().optional(),
   guests: z.string(),
   specialRequests: z.string().optional(),
 });
@@ -51,28 +55,42 @@ export default function BookingPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      bookingOptions: [],
       specialRequests: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+   // Submit handler for booking
+   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/book", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      // Send booking details via Email.js
+      const emailTemplateParams = {
+        to_name: "Eziana Palm Hotel", // The recipient's name
+        from_name: values.name,      // Sender's name from the booking form
+        from_email: values.email,    // Sender's email from the booking form
+        phone: values.phone,
+        checkIn: values.checkIn.toDateString(),
+        checkOut: values.checkOut.toDateString(),
+        bookingOptions: values.bookingOptions.join(", "),
+        roomType: values.roomType || "N/A",
+        conferenceRoomType: values.conferenceRoomType || "N/A",
+        guests: values.guests,
+        specialRequests: values.specialRequests || "None",
+      };
+      
 
-      if (!response.ok) {
-        throw new Error("Failed to submit booking");
-      }
+      await emailjs.send(
+        "service_hqvpfau", // Replace with your Email.js Service ID
+        "template_95yrz4f", // Replace with your Email.js Template ID
+        emailTemplateParams,
+        "A_wu-7eXRVuAuYviq" // Replace with your Email.js User ID
+      );
 
       toast.success("Booking request submitted successfully!");
       form.reset();
     } catch (error) {
+      console.error("Error sending email:", error);
       toast.error("Failed to submit booking. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -107,7 +125,7 @@ export default function BookingPage() {
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="John Doe"
+                        placeholder="Your name"
                         {...field}
                         className="bg-card text-card-foreground"
                       />
@@ -124,7 +142,7 @@ export default function BookingPage() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="john@example.com"
+                        placeholder="email@example.com"
                         {...field}
                         className="bg-card text-card-foreground"
                       />
@@ -204,31 +222,114 @@ export default function BookingPage() {
               </div>
               <FormField
                 control={form.control}
-                name="roomType"
-                render={({ field }) => (
+                name="bookingOptions"
+                render={() => (
                   <FormItem>
-                    <FormLabel>Room Type</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="bg-card text-card-foreground">
-                          <SelectValue placeholder="Select a room type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="deluxe">Deluxe Room</SelectItem>
-                        <SelectItem value="executive">Executive Suite</SelectItem>
-                        <SelectItem value="presidential">
-                          Presidential Suite
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Booking Options</FormLabel>
+                    <div className="flex space-x-4">
+                      <FormField
+                        control={form.control}
+                        name="bookingOptions"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes('room')}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, 'room'])
+                                    : field.onChange(field.value?.filter((value) => value !== 'room'))
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Room
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="bookingOptions"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes('conference')}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, 'conference'])
+                                    : field.onChange(field.value?.filter((value) => value !== 'conference'))
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Conference Room
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              {form.watch("bookingOptions")?.includes("room") && (
+                <FormField
+                  control={form.control}
+                  name="roomType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Room Type</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-card text-card-foreground">
+                            <SelectValue placeholder="Select a room type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="deluxe">Deluxe Room</SelectItem>
+                          <SelectItem value="executive">Executive Suite</SelectItem>
+                          <SelectItem value="presidential">
+                            Presidential Suite
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {form.watch("bookingOptions")?.includes("conference") && (
+                <FormField
+                  control={form.control}
+                  name="conferenceRoomType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Conference Room Type</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-card text-card-foreground">
+                            <SelectValue placeholder="Select a conference room type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="small">Small (up to 10 people)</SelectItem>
+                          <SelectItem value="medium">Medium (up to 30 people)</SelectItem>
+                          <SelectItem value="large">Large (up to 100 people)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="guests"
@@ -286,3 +387,4 @@ export default function BookingPage() {
     </div>
   );
 }
+

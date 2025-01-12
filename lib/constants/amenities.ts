@@ -1,20 +1,5 @@
 export const amenities = [
   {
-    icon: "Pool",
-    title: "Swimming Pool",
-    description: "Infinity pool with panoramic city views",
-  },
-  {
-    icon: "Utensils",
-    title: "Fine Dining",
-    description: "24/7 restaurant with international cuisine",
-  },
-  {
-    icon: "Dumbbell",
-    title: "Fitness Center",
-    description: "State-of-the-art equipment and personal trainers",
-  },
-  {
     icon: "Wine",
     title: "Bar & Lounge",
     description: "Premium drinks and live entertainment",
